@@ -1,0 +1,194 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+struct Menu {
+    int id;
+    string name;
+    double price;
+};
+
+void input(Menu a[], int size);
+void show(int id, Menu a[], int size);
+void showMenu(Menu a[], int size);
+int findCheapest(Menu a[], int size);
+int findByName(string search, Menu a[], int size);
+void orderByPriceAsc(Menu a[], int size);
+void orderByPriceDesc(Menu a[], int size);
+void orderByName(Menu a[], int size);
+
+int main() {
+	
+    const int menuSize = 5;
+    Menu menu[menuSize];
+     //default items in the menu
+    menu[0].id = 1;
+    menu[0].name = "BlackCoffee";
+    menu[0].price = 25.000;
+
+    menu[1].id = 2;
+    menu[1].name = "WhiteCoffee";
+    menu[1].price = 28.000;
+
+    menu[2].id = 3;
+    menu[2].name = "MixCoffee";
+    menu[2].price = 35.000;
+
+    menu[3].id = 4;
+    menu[3].name = "MilkTea";
+    menu[3].price = 32.000;
+
+    menu[4].id = 5;
+    menu[4].name = "SailtCoffee";
+    menu[4].price = 38.000;
+
+    int choice;
+	
+    do {
+        cout << "Menu Options:" << endl;
+        cout << "1. Input Menu" << endl;
+        cout << "2. Show Menu" << endl;
+        cout << "3. Find Cheapest Item" << endl;
+        cout << "4. Search by Name" << endl;
+        cout << "5. Order by Price (Ascending)" << endl;
+        cout << "6. Order by Price (Descending)" << endl;
+        cout << "7. Order by Name" << endl;
+        cout << "0. Exit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+        cin.ignore();
+
+        switch (choice) {
+            case 1:
+                input(menu, menuSize);
+                break;
+            case 2:
+                showMenu(menu, menuSize);
+    			cout << "Enter the ID of the item you want to view details: ";
+    			int itemId;
+   				cin >> itemId;
+   				show(itemId - 1, menu, menuSize); // Adjust ID to array index
+    			break;
+            case 3: {
+                int cheapestId = findCheapest(menu, menuSize);
+                cout << "Cheapest item: ";
+                show(cheapestId, menu, menuSize);
+                break;
+            }
+            case 4: {
+                string searchItem;
+                cout << "Enter the name to search: ";
+                cin >> searchItem;
+
+                int searchResult = findByName(searchItem, menu, menuSize);
+                if (searchResult != -1) {
+                    cout << "Item found: ";
+                    show(searchResult, menu, menuSize);
+                } else {
+                    cout << "Item not found." << endl;
+                }
+                break;
+            }
+            case 5:
+                orderByPriceAsc(menu, menuSize);
+                cout << "Menu after ordering by price (ascending):" << endl;
+                showMenu(menu, menuSize);
+                break;
+            case 6:
+                orderByPriceDesc(menu, menuSize);
+                cout << "Menu after ordering by price (descending):" << endl;
+                showMenu(menu, menuSize);
+                break;
+            case 7:
+                orderByName(menu, menuSize);
+                cout << "Menu after ordering by name:" << endl;
+                showMenu(menu, menuSize);
+                break;
+            case 0:
+                cout << "Exiting the program. Goodbye!" << endl;
+                break;
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+        }
+
+    } while (choice != 0);
+
+    return 0;
+}
+
+void input(Menu a[], int size) {
+    for (int i = 0; i < size; ++i) {
+        cout << "Enter details for item " << i + 1 << ":" << endl;
+        a[i].id = i + 1;
+        cout << "Name: ";
+        cin.ignore(); // clear buffer
+        getline(cin, a[i].name);
+        cout << "Price: ";
+        cin >> a[i].price;
+    }
+}
+
+void show(int id, Menu a[], int size) {
+    if (id >= 0 && id < size) {
+        cout << "ID: " << a[id].id << ", Name: " << a[id].name << ", Price: " << a[id].price << endl;
+    } else {
+        cout << "Invalid ID." << endl;
+    }
+}
+
+void showMenu(Menu a[], int size) {
+    cout << "Menu:" << endl;
+    for (int i = 0; i < size; ++i) {
+        show(i, a, size);
+    }
+}
+
+int findCheapest(Menu a[], int size) {
+    int cheapestId = 0;
+    for (int i = 1; i < size; ++i) {
+        if (a[i].price < a[cheapestId].price) {
+            cheapestId = i;
+        }
+    }
+    return cheapestId;
+}
+
+int findByName(string search, Menu a[], int size) {
+    for (int i = 0; i < size; ++i) {
+        if (a[i].name == search) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void orderByPriceAsc(Menu a[], int size) {
+    for (int i = 0; i < size - 1; ++i) {
+        for (int j = i + 1; j < size; ++j) {
+            if (a[j].price < a[i].price) {
+                swap(a[i], a[j]);
+            }
+        }
+    }
+}
+
+void orderByPriceDesc(Menu a[], int size) {
+    for (int i = 0; i < size - 1; ++i) {
+        for (int j = i + 1; j < size; ++j) {
+            if (a[j].price > a[i].price) {
+                swap(a[i], a[j]);
+            }
+        }
+    }
+}
+
+void orderByName(Menu a[], int size) {
+    for (int i = 0; i < size - 1; ++i) {
+        for (int j = i + 1; j < size; ++j) {
+            if (a[j].name < a[i].name) {
+                swap(a[i], a[j]);
+            }
+        }
+    }
+}
+
