@@ -1,0 +1,210 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+struct Menu {
+    int id;
+    string name;
+    double price;
+};
+
+void show(int id, Menu a[], int size);
+int findCheapest(Menu a[], int size);
+int findByName(string search, Menu a[], int size);
+void orderByPriceAsc(Menu a[], int size);
+void orderByPriceDesc(Menu a[], int size);
+void orderByName(Menu a[], int size);
+double calculateBill(Menu a[], int selectedIds[], int itemCount);
+
+void showMenu(Menu a[], int size) {
+    cout << "Menu:" << endl;
+    for (int i = 0; i < size; ++i) {
+        show(i, a, size);
+    }
+}
+
+int main() {
+
+    const int menuSize = 5;
+    Menu menu[menuSize];
+    //default items in the menu
+    menu[0].id = 1;
+    menu[0].name = "BlackCoffee";
+    menu[0].price = 25.000;
+
+    menu[1].id = 2;
+    menu[1].name = "WhiteCoffee";
+    menu[1].price = 28.000;
+
+    menu[2].id = 3;
+    menu[2].name = "MixCoffee";
+    menu[2].price = 35.000;
+
+    menu[3].id = 4;
+    menu[3].name = "MilkTea";
+    menu[3].price = 32.000;
+
+    menu[4].id = 5;
+    menu[4].name = "SailtCoffee";
+    menu[4].price = 38.000;
+
+    int choice;
+
+    double totalBill = 0.0; // S? ti?n c?n thanh to�n
+
+    do {
+        cout << "Menu Options:" << endl;
+        cout << "1. Show Menu" << endl;
+        cout << "2. Find Cheapest Item" << endl;
+        cout << "3. Search by Name" << endl;
+        cout << "4. Order by Price (Ascending)" << endl;
+        cout << "5. Order by Price (Descending)" << endl;
+        cout << "6. Order by Name" << endl;
+        cout << "7. Calculate Bill" << endl; // Th�m l?a ch?n t�nh bill
+        cout << "0. Exit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                showMenu(menu, menuSize);
+                break;
+            case 2: {
+                int cheapestId = findCheapest(menu, menuSize);
+                cout << "Cheapest item: ";
+                show(cheapestId, menu, menuSize);
+                break;
+            }
+            case 3: {
+                string searchItem;
+                cout << "Enter the name to search: ";
+                cin >> searchItem;
+
+                int searchResult = findByName(searchItem, menu, menuSize);
+                if (searchResult != -1) {
+                    cout << "Item found: ";
+                    show(searchResult, menu, menuSize);
+                } else {
+                    cout << "Item not found." << endl;
+                }
+                break;
+            }
+            case 4:
+                orderByPriceAsc(menu, menuSize);
+                cout << "Menu after ordering by price (ascending):" << endl;
+                for (int i = 0; i < menuSize; ++i) {
+                    show(i, menu, menuSize);
+                }
+                break;
+            case 5:
+                orderByPriceDesc(menu, menuSize);
+                cout << "Menu after ordering by price (descending):" << endl;
+                for (int i = 0; i < menuSize; ++i) {
+                    show(i, menu, menuSize);
+                }
+                break;
+            case 6:
+                orderByName(menu, menuSize);
+                cout << "Menu after ordering by name:" << endl;
+                for (int i = 0; i < menuSize; ++i) {
+                    show(i, menu, menuSize);
+                }
+                break;
+            case 7: {
+                // Ch?n menu
+                showMenu(menu, menuSize);
+                cout << "Enter the IDs of the items you want to order (separated by spaces): ";
+                int selectedIds[menuSize];
+                int itemCount = 0;
+                do {
+                    int itemId;
+                    cin >> itemId;
+                    if (itemId >= 1 && itemId <= menuSize) {
+                        selectedIds[itemCount++] = itemId - 1; // Luu �: gi? s? menu b?t d?u t? 1
+                    } else if (itemId != 0) {
+                        cout << "Invalid item ID. Please enter a valid ID or 0 to finish ordering." << endl;
+                    }
+                } while (itemCount < menuSize && selectedIds[itemCount - 1] != 0);
+
+                // T�nh bill thanh to�n v� in ra m�n h�nh
+                totalBill = calculateBill(menu, selectedIds, itemCount);
+                cout << "Total bill: " << totalBill << " VND" << endl;
+                break;
+            }
+            case 0:
+                cout << "Exiting the program. Goodbye!" << endl;
+                break;
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+        }
+
+    } while (choice != 0);
+
+    return 0;
+}
+
+void show(int id, Menu a[], int size) {
+    if (id >= 0 && id < size) {
+        cout << "ID: " << a[id].id << ", Name: " << a[id].name << ", Price: " << a[id].price << endl;
+    } else {
+        cout << "Invalid ID." << endl;
+    }
+}
+
+int findCheapest(Menu a[], int size) {
+    int cheapestId = 0;
+    for (int i = 1; i < size; ++i) {
+        if (a[i].price < a[cheapestId].price) {
+            cheapestId = i;
+        }
+    }
+    return cheapestId;
+}
+
+int findByName(string search, Menu a[], int size) {
+    for (int i = 0; i < size; ++i) {
+        if (a[i].name == search) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void orderByPriceAsc(Menu a[], int size) {
+    for (int i = 0; i < size - 1; ++i) {
+        for (int j = i + 1; j < size; ++j) {
+            if (a[j].price < a[i].price) {
+                swap(a[i], a[j]);
+            }
+        }
+    }
+}
+
+void orderByPriceDesc(Menu a[], int size) {
+    for (int i = 0; i < size - 1; ++i) {
+        for (int j = i + 1; j < size; ++j) {
+            if (a[j].price > a[i].price) {
+                swap(a[i], a[j]);
+            }
+        }
+    }
+}
+
+void orderByName(Menu a[], int size) {
+    for (int i = 0; i < size - 1; ++i) {
+        for (int j = i + 1; j < size; ++j) {
+            if (a[j].name < a[i].name) {
+                swap(a[i], a[j]);
+            }
+        }
+    }
+}
+
+double calculateBill(Menu a[], int selectedIds[], int itemCount) {
+    double bill = 0.0;
+    for (int i = 0; i < itemCount; ++i) {
+        bill += a[selectedIds[i]].price;
+    }
+    return bill;
+}
+
